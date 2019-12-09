@@ -1,14 +1,15 @@
 package com.example.braintrainer;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
+import com.example.braintrainer.databinding.ActivitySecondBinding;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,53 +21,30 @@ public class SecondActivity extends AppCompatActivity {
     private static final int ONE_SECOND = 1000;
     // 30 seconds
     private static final int MAX = 30000;
-    private CountDownTimer timer;
-    private TextView counterTextView;
-    private TextView sumTextView;
-    private TextView answerTypeTextView;
-    private TextView scoreTextView;
 
-    private int firstNumber;
-    private int secondNumber;
+    private CountDownTimer timer;
+
+    private int a;
+    private int b;
     private int sum;
     private int score = 0;
     private int numberOfQuestions = 0;
-
-    private Button playAgainButton;
 
     private ArrayList<Integer> answers;
     private int correctAnswerLocation;
     private int incorrectAnswer;
 
-    private Button button0;
-    private Button button1;
-    private Button button2;
-    private Button button3;
+    private ActivitySecondBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_second);
 
-        counterTextView = findViewById(R.id.counter_textView);
-        playAgainButton = findViewById(R.id.button_play_again);
-        sumTextView = findViewById(R.id.sum_textView);
-        answerTypeTextView = findViewById(R.id.answer_type_textView);
-        scoreTextView = findViewById(R.id.score_textView);
-
-        button0 = findViewById(R.id.button_0);
-        button1 = findViewById(R.id.button_1);
-        button2 = findViewById(R.id.button_2);
-        button3 = findViewById(R.id.button_3);
-
-        scoreTextView.setText(score + "/" + numberOfQuestions);
-
+        binding.scoreTextView.setText(score + "/" + numberOfQuestions);
         buttonInvisible();
-
         setupTimer();
         showRandomNumbers();
-
-        calculateSum();
     }
 
     public void setupTimer() {
@@ -81,18 +59,18 @@ public class SecondActivity extends AppCompatActivity {
 
                 String formattedTime = String.format("%02d:%02d", min, sec);
 
-                counterTextView.setText(formattedTime);
+                binding.counterTextView.setText(formattedTime);
 
                 //Log.i("Counter", formattedTime);
             }
 
             @Override
             public void onFinish() {
-                playAgainButton.setVisibility(View.VISIBLE);
+                buttonVisible();
                 buttonsClickableFalse();
 
-                answerTypeTextView.setText("You have answered " + score + " from " + numberOfQuestions + " correctly!");
-                answerTypeTextView.setTextSize( 20f);
+                binding.answerTypeTextView.setText("You have answered " + score + " from " + numberOfQuestions + " correctly!");
+                binding.answerTypeTextView.setTextSize(20f);
             }
         }.start();
     }
@@ -102,10 +80,10 @@ public class SecondActivity extends AppCompatActivity {
         answers = new ArrayList<>();
 
         Random randomNumber = new Random();
-        firstNumber = randomNumber.nextInt(21);
-        secondNumber = randomNumber.nextInt(21);
+        a = randomNumber.nextInt(21);
+        b = randomNumber.nextInt(21);
 
-        sumTextView.setText(firstNumber + " + " + secondNumber);
+        binding.sumTextView.setText(a + " + " + b);
 
         correctAnswerLocation = randomNumber.nextInt(4);
 
@@ -113,13 +91,13 @@ public class SecondActivity extends AppCompatActivity {
 
             if (i == correctAnswerLocation) {
 
-                answers.add(firstNumber + secondNumber);
+                answers.add(a + b);
 
             } else {
 
                 incorrectAnswer = randomNumber.nextInt(41);
 
-                while (incorrectAnswer == firstNumber + secondNumber) {
+                while (incorrectAnswer == a + b) {
 
                     incorrectAnswer = randomNumber.nextInt(41);
                 }
@@ -127,34 +105,15 @@ public class SecondActivity extends AppCompatActivity {
             }
         }
 
-        button0.setText(Integer.toString(answers.get(0)));
-        button1.setText(Integer.toString(answers.get(1)));
-        button2.setText(Integer.toString(answers.get(2)));
-        button3.setText(Integer.toString(answers.get(3)));
-    }
-
-    public void buttonInvisible() {
-        playAgainButton.setVisibility(View.INVISIBLE);
-    }
-
-    public void playAgain(View view) {
-        setupTimer();
-        buttonInvisible();
-        answerTypeTextView.setText("");
-
-        showRandomNumbers();
-    }
-
-    public int calculateSum() {
-
-        sum = firstNumber + secondNumber;
-        return sum;
+        binding.button0.setText(Integer.toString(answers.get(0)));
+        binding.button1.setText(Integer.toString(answers.get(1)));
+        binding.button2.setText(Integer.toString(answers.get(2)));
+        binding.button3.setText(Integer.toString(answers.get(3)));
     }
 
     public void onButtonClick(View view) {
-        Button button = (Button) view;
 
-        String tag = button.getTag().toString();
+        String tag = view.getTag().toString();
 
         //Log.i("Button tag is ", tag);
 
@@ -162,42 +121,55 @@ public class SecondActivity extends AppCompatActivity {
 
             Log.i("Answer type", "correct");
 
-            answerTypeTextView.setText("Correct!");
+            binding.answerTypeTextView.setText("Correct!");
 
             score++;
 
-            numberOfQuestions++;
-
-            scoreTextView.setText(score + "/" + numberOfQuestions);
-
-            showRandomNumbers();
+            updateScore();
 
         } else {
 
             Log.i("Answer type", "wrong");
 
-            answerTypeTextView.setText("Wrong!");
+            binding.answerTypeTextView.setText("Wrong!");
 
-            numberOfQuestions++;
-
-            scoreTextView.setText(score + "/" + numberOfQuestions);
-
-            showRandomNumbers();
+            updateScore();
         }
     }
 
+    public void updateScore() {
+        numberOfQuestions++;
+        binding.scoreTextView.setText(score + "/" + numberOfQuestions);
+        showRandomNumbers();
+    }
+
+    public void playAgain(View view) {
+        setupTimer();
+        binding.answerTypeTextView.setText("");
+        buttonInvisible();
+        showRandomNumbers();
+    }
+
+    public void buttonVisible() {
+        binding.buttonPlayAgain.setVisibility(View.VISIBLE);
+    }
+
+    public void buttonInvisible() {
+        binding.buttonPlayAgain.setVisibility(View.INVISIBLE);
+    }
+
     private void buttonsClickableTrue() {
-        button0.setClickable(true);
-        button1.setClickable(true);
-        button2.setClickable(true);
-        button3.setClickable(true);
+        binding.button0.setClickable(true);
+        binding.button1.setClickable(true);
+        binding.button2.setClickable(true);
+        binding.button3.setClickable(true);
     }
 
     private void buttonsClickableFalse() {
-        button0.setClickable(false);
-        button1.setClickable(false);
-        button2.setClickable(false);
-        button3.setClickable(false);
+        binding.button0.setClickable(false);
+        binding.button1.setClickable(false);
+        binding.button2.setClickable(false);
+        binding.button3.setClickable(false);
     }
 }
 
