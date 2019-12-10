@@ -2,16 +2,10 @@ package com.example.braintrainer;
 
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-
 import com.example.braintrainer.databinding.ActivitySecondBinding;
-
-import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -22,33 +16,26 @@ public class SecondActivity extends AppCompatActivity {
     // 30 seconds
     private static final int MAX = 30000;
 
-    private CountDownTimer timer;
-
-    private int a;
-    private int b;
-    private int sum;
-    private int score = 0;
-    private int numberOfQuestions = 0;
-
-    private ArrayList<Integer> answers;
-    private int correctAnswerLocation;
-    private int incorrectAnswer;
-
     private ActivitySecondBinding binding;
+    private BrainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_second);
 
-        binding.scoreTextView.setText(score + "/" + numberOfQuestions);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_second);
+        viewModel = new BrainViewModel();
+
+        binding.scoreTextView.setText(viewModel.getScore() + "/" + viewModel.getQuestionNr());
+
         buttonInvisible();
         setupTimer();
         showRandomNumbers();
     }
 
     public void setupTimer() {
-        timer = new CountDownTimer(MAX, ONE_SECOND) {
+
+        viewModel.setTimer(new CountDownTimer(MAX, ONE_SECOND) {
             @Override
             public void onTick(long millisUntilFinished) {
 
@@ -60,8 +47,6 @@ public class SecondActivity extends AppCompatActivity {
                 String formattedTime = String.format("%02d:%02d", min, sec);
 
                 binding.counterTextView.setText(formattedTime);
-
-                //Log.i("Counter", formattedTime);
             }
 
             @Override
@@ -69,67 +54,61 @@ public class SecondActivity extends AppCompatActivity {
                 buttonVisible();
                 buttonsClickableFalse();
 
-                binding.answerTypeTextView.setText("You have answered " + score + " from " + numberOfQuestions + " correctly!");
+                binding.answerTypeTextView.setText("You have answered " + viewModel.getScore() + " from " + viewModel.getQuestionNr() + " correctly!");
                 binding.answerTypeTextView.setTextSize(20f);
             }
-        }.start();
+        }.start());
     }
 
     public void showRandomNumbers() {
 
-        answers = new ArrayList<>();
-
         Random randomNumber = new Random();
-        a = randomNumber.nextInt(21);
-        b = randomNumber.nextInt(21);
 
-        binding.sumTextView.setText(a + " + " + b);
+        viewModel.setA(randomNumber.nextInt(21));
+        viewModel.setB(randomNumber.nextInt(21));
 
-        correctAnswerLocation = randomNumber.nextInt(4);
+        binding.sumTextView.setText(viewModel.getA() + " + " + viewModel.getB());
+
+        viewModel.setCorrectAnswerPos(randomNumber.nextInt(4));
 
         for (int i = 0; i < 4; i++) {
 
-            if (i == correctAnswerLocation) {
+            if (i == viewModel.getCorrectAnswerPos()) {
 
-                answers.add(a + b);
+                viewModel.setAnswers(viewModel.getA() + viewModel.getB());
 
             } else {
 
-                incorrectAnswer = randomNumber.nextInt(41);
+                viewModel.setIncorrectAnswer(randomNumber.nextInt(41));
 
-                while (incorrectAnswer == a + b) {
+                while (viewModel.getIncorrectAnswer() == viewModel.getA() + viewModel.getB()) {
 
-                    incorrectAnswer = randomNumber.nextInt(41);
+                    viewModel.setIncorrectAnswer(randomNumber.nextInt(41));
                 }
-                answers.add(incorrectAnswer);
+
+                viewModel.setAnswers(viewModel.getIncorrectAnswer());
             }
         }
 
-        binding.button0.setText(Integer.toString(answers.get(0)));
-        binding.button1.setText(Integer.toString(answers.get(1)));
-        binding.button2.setText(Integer.toString(answers.get(2)));
-        binding.button3.setText(Integer.toString(answers.get(3)));
+        binding.button0.setText(Integer.toString(viewModel.getAnswers().get(0)));
+        binding.button1.setText(Integer.toString(viewModel.getAnswers().get(1)));
+        binding.button2.setText(Integer.toString(viewModel.getAnswers().get(2)));
+        binding.button3.setText(Integer.toString(viewModel.getAnswers().get(3)));
     }
-
     public void onButtonClick(View view) {
 
         String tag = view.getTag().toString();
 
-        //Log.i("Button tag is ", tag);
-
-        if (tag.equals(String.valueOf(correctAnswerLocation))) {
-
-            Log.i("Answer type", "correct");
+        if (tag.equals(String.valueOf(viewModel.getCorrectAnswerPos()))) {
 
             binding.answerTypeTextView.setText("Correct!");
 
-            score++;
+            // increments the score
+            viewModel.setScore(viewModel.getScore() + 1);
 
             updateScore();
 
         } else {
-
-            Log.i("Answer type", "wrong");
 
             binding.answerTypeTextView.setText("Wrong!");
 
@@ -138,15 +117,16 @@ public class SecondActivity extends AppCompatActivity {
     }
 
     public void updateScore() {
-        numberOfQuestions++;
-        binding.scoreTextView.setText(score + "/" + numberOfQuestions);
+        // increments the number od questions
+        viewModel.setQuestionNr(viewModel.getQuestionNr() + 1);
+        binding.scoreTextView.setText(viewModel.getScore() + "/" + viewModel.getQuestionNr());
         showRandomNumbers();
     }
 
     public void playAgain(View view) {
+        buttonInvisible();
         setupTimer();
         binding.answerTypeTextView.setText("");
-        buttonInvisible();
         showRandomNumbers();
     }
 
