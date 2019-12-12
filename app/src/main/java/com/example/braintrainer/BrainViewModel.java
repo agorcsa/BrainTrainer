@@ -1,7 +1,9 @@
 package com.example.braintrainer;
 
 import android.os.CountDownTimer;
+
 import androidx.lifecycle.ViewModel;
+
 import java.util.ArrayList;
 
 
@@ -13,7 +15,7 @@ public class BrainViewModel extends ViewModel {
     private int correctAnswerPos;
     private int incorrectAnswer;
 
-    private ArrayList<Integer> answers = new ArrayList<>();
+    private ArrayList<Integer> answer = new ArrayList<>(4);
 
     private int score = 0;
     private int questionNr = 0;
@@ -53,14 +55,6 @@ public class BrainViewModel extends ViewModel {
         this.correctAnswerPos = correctAnswerPos;
     }
 
-    public ArrayList<Integer> getAnswers() {
-        return answers;
-    }
-
-    public void setAnswers(ArrayList<Integer> answers) {
-        this.answers = answers;
-    }
-
     public int getScore() {
         return score;
     }
@@ -83,5 +77,13 @@ public class BrainViewModel extends ViewModel {
 
     public void setTimer(CountDownTimer timer) {
         this.timer = timer;
+    }
+
+    public ArrayList<Integer> getAnswers() {
+        return answer;
+    }
+
+    public void setAnswers(int answers) {
+        this.answer.add(answers);
     }
 }

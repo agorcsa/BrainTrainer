@@ -5,6 +5,8 @@ import android.os.CountDownTimer;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+
 import com.example.braintrainer.databinding.ActivitySecondBinding;
 import java.util.Random;
 
@@ -24,7 +26,8 @@ public class SecondActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_second);
-        viewModel = new BrainViewModel();
+
+        viewModel = ViewModelProviders.of(this).get(BrainViewModel.class);
 
         binding.scoreTextView.setText(viewModel.getScore() + "/" + viewModel.getQuestionNr());
 
@@ -62,6 +65,7 @@ public class SecondActivity extends AppCompatActivity {
 
     public void showRandomNumbers() {
 
+        // creates random numbers for the sum  (a + b)
         Random randomNumber = new Random();
 
         viewModel.setA(randomNumber.nextInt(21));
@@ -69,6 +73,8 @@ public class SecondActivity extends AppCompatActivity {
 
         binding.sumTextView.setText(viewModel.getA() + " + " + viewModel.getB());
 
+
+        //
         viewModel.setCorrectAnswerPos(randomNumber.nextInt(4));
 
         for (int i = 0; i < 4; i++) {
