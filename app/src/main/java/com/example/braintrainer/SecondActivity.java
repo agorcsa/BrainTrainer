@@ -81,7 +81,7 @@ public class SecondActivity extends AppCompatActivity {
 
             if (i == viewModel.getCorrectAnswerPos()) {
 
-                viewModel.setAnswers(viewModel.getA() + viewModel.getB());
+                viewModel.setAnswer(viewModel.getCorrectAnswerPos(), viewModel.getA() + viewModel.getB());
 
             } else {
 
@@ -92,7 +92,7 @@ public class SecondActivity extends AppCompatActivity {
                     viewModel.setIncorrectAnswer(randomNumber.nextInt(41));
                 }
 
-                viewModel.setAnswers(viewModel.getIncorrectAnswer());
+                viewModel.setAnswer(index, viewModel.getIncorrectAnswer());
             }
         }
 
@@ -158,4 +158,3 @@ public class SecondActivity extends AppCompatActivity {
         binding.button3.setClickable(false);
     }
 }
-

@@ -83,7 +83,7 @@ public class BrainViewModel extends ViewModel {
         return answer;
     }
 
-    public void setAnswers(int answers) {
-        this.answer.add(answers);
+    public void setAnswer(int index, int answers) {
+        this.answer.set(index, answers);
     }
 }
