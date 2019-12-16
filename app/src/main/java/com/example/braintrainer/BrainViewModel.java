@@ -5,6 +5,7 @@ import android.os.CountDownTimer;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class BrainViewModel extends ViewModel {
@@ -15,7 +16,7 @@ public class BrainViewModel extends ViewModel {
     private int correctAnswerPos;
     private int incorrectAnswer;
 
-    private ArrayList<Integer> answer = new ArrayList<>(4);
+    private ArrayList<Integer> answer = new ArrayList<>(Arrays.asList(0, 0, 0, 0));
 
     private int score = 0;
     private int questionNr = 0;

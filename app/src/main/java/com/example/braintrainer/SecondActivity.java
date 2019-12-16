@@ -32,9 +32,13 @@ public class SecondActivity extends AppCompatActivity {
         binding.scoreTextView.setText(viewModel.getScore() + "/" + viewModel.getQuestionNr());
 
         buttonInvisible();
-        setupTimer();
+
+        if (viewModel.getTimer() == null) {
+            setupTimer(); }
+
         showRandomNumbers();
     }
+
 
     public void setupTimer() {
 
@@ -74,7 +78,6 @@ public class SecondActivity extends AppCompatActivity {
         binding.sumTextView.setText(viewModel.getA() + " + " + viewModel.getB());
 
 
-        //
         viewModel.setCorrectAnswerPos(randomNumber.nextInt(4));
 
         for (int i = 0; i < 4; i++) {
@@ -92,7 +95,7 @@ public class SecondActivity extends AppCompatActivity {
                     viewModel.setIncorrectAnswer(randomNumber.nextInt(41));
                 }
 
-                viewModel.setAnswer(index, viewModel.getIncorrectAnswer());
+                viewModel.setAnswer(i, viewModel.getIncorrectAnswer());
             }
         }
 
